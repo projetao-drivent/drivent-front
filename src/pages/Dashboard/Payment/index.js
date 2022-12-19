@@ -26,6 +26,8 @@ export default function Payment() {
   const [focus, setFocus] = useState('');
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const [remote, setRemote] = useState(true);
+  const [includeHotel, setIncludeHotel] = useState(true);
   const token = useToken();
   async function submit(e) {
     e.preventDefault();
@@ -50,11 +52,19 @@ export default function Payment() {
       alert('erro');
     }
   }
+  useEffect(async() => {
+    async function ticket() {
+      const res= await paymentApi.getTicket(token);
+      setRemote(res.TicketType.isRemote);
+      setIncludeHotel(res.TicketType.includesHotel);
+    }
+    await ticket();
+  }, []);
   return (
     <>
-      <TicketInfo width={'290px'} height={'108px'}>
+      <TicketInfo width={'290px'} height={'108px'} cor={'rgb(255, 238, 210)'}>
         <p>
-          {userData.ticketModality} + {userData.ticketAccommodation}
+          {remote ? 'online' : 'Presencial'} + {includeHotel ? 'Com Hotel' : 'Sem Hotel'}
         </p>
         <p>R$ {userData.ticketPrice}</p>
       </TicketInfo>
