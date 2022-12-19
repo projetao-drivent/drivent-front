@@ -25,10 +25,10 @@ export const Card = styled.div`
     border: 1px solid #CECECE;
     border-radius: 20px;
     background: ${props => props.primary? '#FFEED2': ''};
-    &:hover{
+     &:hover{
       background-color: #FFEED2;
       cursor: pointer;
-    }
+    } 
 
 `;
 export const TicketType = styled.span`
@@ -56,4 +56,8 @@ export const Button = styled.button`
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   border: none;
+  :hover{
+    background: #d3d3d3;
+  }
+  cursor: pointer;
 `; 
