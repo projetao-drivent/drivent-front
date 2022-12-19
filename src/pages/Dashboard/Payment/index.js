@@ -27,6 +27,7 @@ export default function Payment() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [remote, setRemote] = useState(true);
+  const [preco, setPreco] = useState(0);
   const [includeHotel, setIncludeHotel] = useState(true);
   const token = useToken();
   async function submit(e) {
@@ -44,8 +45,6 @@ export default function Payment() {
         }
       };
       
-      alert(body.ticketId);
-      alert(body.issuer);
       await paymentApi.pay(body, token);
       setUserData({ ...userData, isTickedPayed: true });
     } catch {
@@ -57,6 +56,7 @@ export default function Payment() {
       const res= await paymentApi.getTicket(token);
       setRemote(res.TicketType.isRemote);
       setIncludeHotel(res.TicketType.includesHotel);
+      setPreco((res.TicketType.price/100).toString().replace('.', ','));
     }
     await ticket();
   }, []);
@@ -66,7 +66,7 @@ export default function Payment() {
         <p>
           {remote ? 'online' : 'Presencial'} + {includeHotel ? 'Com Hotel' : 'Sem Hotel'}
         </p>
-        <p>R$ {userData.ticketPrice}</p>
+        <p>R$ {preco}</p>
       </TicketInfo>
       <Label marginTop={'44px'}>Pagamento</Label>
       {userData.isTickedPayed ? (
