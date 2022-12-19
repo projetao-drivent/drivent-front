@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
+import { getStatusPayment } from '../../../services/hotelApi';
 
 export default function Hotel() {
-  const [ StatusPay, setStatusPay] = useState(true);
+  const [ StatusPay, setStatusPay] = useState(false); 
+  useEffect(async() => {
+    try {
+      //await getStatusPayment();
+      setStatusPay(true);
+    }catch(error) {
+      console.log(error);
+    };
+  }, [StatusPay]);
 
   return (
     <>
