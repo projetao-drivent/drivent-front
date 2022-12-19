@@ -30,14 +30,19 @@ export default function Payment() {
   async function submit(e) {
     e.preventDefault();
     try {
+      const res= await paymentApi.getTicket(token);
       const body={
-        ticketId: 0,
-        issuer: 'issuer',
-        number: number,
-        name: name,
-        expirationDate: expiry,
-        cvv: cvc
+        ticketId: res.id,
+        cardData: {
+          issuer: res.TicketType.name,
+          number: number,
+          name: name,
+          expirationDate: expiry,
+          cvv: cvc
+        }
       };
+      
+      alert(body.ticketId);
       alert(body.issuer);
       await paymentApi.pay(body, token);
       setUserData({ ...userData, isTickedPayed: true });
