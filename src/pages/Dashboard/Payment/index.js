@@ -57,11 +57,20 @@ export default function Payment() {
       setRemote(res.TicketType.isRemote);
       setIncludeHotel(res.TicketType.includesHotel);
       setPreco((res.TicketType.price/100).toString().replace('.', ','));
+      if(res) {
+        const pay = await paymentApi.getPayment(res.id, token);
+        if(pay) {
+          setUserData({ ...userData, isTickedPayed: true });
+        }
+      }
     }
+    
     await ticket();
   }, []);
   return (
     <>
+      <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
+      <Label cor={'#8E8E8E'} >Primeiro, escolha sua modalidade de ingresso</Label>
       <TicketInfo width={'290px'} height={'108px'} cor={'rgb(255, 238, 210)'}>
         <p>
           {remote ? 'online' : 'Presencial'} + {includeHotel ? 'Com Hotel' : 'Sem Hotel'}
@@ -139,3 +148,6 @@ export default function Payment() {
     </>
   );
 }
+const StyledTypography = styled(Typography)`
+  margin-bottom: 20px !important;
+`;

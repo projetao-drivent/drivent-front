@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Label = styled.p`
   margin-top: ${(props) => props.marginTop || 0};
   margin-bottom: 17px;
-  color: var(--gray);
+  color: ${(props) => props.cor};
   font-size: 20px;
   font-family: 'Roboto', sans-serif;
   display:${(props) => props.display};
