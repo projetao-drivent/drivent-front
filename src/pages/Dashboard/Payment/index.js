@@ -30,8 +30,6 @@ export default function Payment() {
       ticketTypeOnline = ticket;
     } else if(ticket.name === 'presencial' && ticket.price === 250) {
       ticketTypePresential = ticket;
-    }else {
-      return ticketTypeOnline;
     }
   });
   
