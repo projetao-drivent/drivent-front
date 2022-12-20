@@ -22,6 +22,8 @@ export default function Hotel() {
     }
   }, [hotelLoading]);
 
+  console.log(hotels);
+
   return (
     <>
       {ticketType.includesHotel ? (
@@ -33,6 +35,14 @@ export default function Hotel() {
               <HotelCard>
                 <HotelImg image={hotel.image} />
                 <HotelName>{hotel.name}</HotelName>
+                <Accomodations>
+                  Tipos de acomodação:
+                  {hotel.Rooms.find((room) => room.capacity > 2) ? (
+                    <Info>Single, Double e Triple</Info>
+                  ) : (
+                    <Info>Single e Double</Info>
+                  )}
+                </Accomodations>
               </HotelCard>
             ))}
           </Container>
@@ -58,6 +68,13 @@ const Title = styled.span`
   font-weight: 400;
   font-size: 20px;
   color: #8e8e8e;
+`;
+
+const Info = styled.span`
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: #3c3c3c;
 `;
 
 const NoHotelMsg = styled.div`
@@ -99,9 +116,22 @@ const HotelImg = styled.div`
 `;
 
 const HotelName = styled.div`
-  width: 12.3vw;
-  height: 15vh;
+  width: 12vw;
+  height: 5vh;
   margin-top: 10px;
+`;
+
+const Accomodations = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 12vw;
+  height: 15vh;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  color: #3c3c3c;
 `;
 
 const Container = styled.div`
