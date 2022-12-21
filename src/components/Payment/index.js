@@ -48,7 +48,7 @@ export const TicketPrice = styled.span`
   font-size: 1rem;
 `;
 
-export const Button = styled.button`
+export const Button2 = styled.button`
   width: 162px;
   height: 37px;
   cursor: pointer;

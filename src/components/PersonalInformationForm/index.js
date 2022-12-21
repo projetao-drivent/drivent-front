@@ -30,7 +30,7 @@ export default function PersonalInformationForm() {
   const { getCep } = useCep();
   const { enrollment } = useEnrollment();
   const { saveEnrollmentLoading, saveEnrollment } = useSaveEnrollment();
-
+  
   const {
     handleSubmit,
     handleChange,
