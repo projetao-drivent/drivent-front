@@ -48,7 +48,7 @@ export const TicketPrice = styled.span`
   font-size: 1rem;
 `;
 
-export const Button = styled.button`
+export const Button2 = styled.button`
   width: 162px;
   height: 37px;
   cursor: pointer;
@@ -62,3 +62,17 @@ export const Button = styled.button`
   }
   cursor: pointer;
 `; 
+
+export const NoEnrollMsg = styled.div`
+display: flex;
+flex-wrap: wrap;
+font-family: 'Roboto', sans-serif;
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+text-align: center;
+color: #8e8e8e;
+width: 35vw;
+height: 30vh;
+margin: 30vh auto;
+`;
