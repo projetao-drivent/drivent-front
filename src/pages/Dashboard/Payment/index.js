@@ -84,7 +84,7 @@ export default function Payment() {
       await paymentApi.pay(body, token);
       setUserData({ ...userData, isTickedPayed: true });
     } catch {
-      alert('erro');
+      toast('Não foi possível completar o pagamento do ingresso');
     }
   }
   
@@ -146,14 +146,18 @@ export default function Payment() {
   console.log(tickets);
 
   async function sendInfoTicket( online ) {
-    if(online) {
-      const body =  {
-        ticketTypeId: ticketTypeOnline.id,
-      };
-      await ticketApi.postTicket(body, token);
-      await postTicket(body);
-      await TicketTela();
-      setTela2(true);
+    try {
+      if(online) {
+        const body =  {
+          ticketTypeId: ticketTypeOnline.id,
+        };
+        await ticketApi.postTicket(body, token);
+        await postTicket(body);
+        await TicketTela();
+        setTela2(true);
+      }
+    } catch(error) {
+      toast('Não foi possível reservar o ingresso');
     }
   }; 
 
