@@ -25,3 +25,11 @@ export async function getPayment(ticketId, token) {
   });
   return response.data;
 };
+export async function getEnrollments(token) {
+  const response = await api.get('enrollments', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

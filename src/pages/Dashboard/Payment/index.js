@@ -9,7 +9,8 @@ import {
   CreditCardContainer,
   Button,
   PaymentConfirmation,
-  Tela2
+  Tela2,
+  NoHotelMsg
 } from '../../../components/Dashboard/Payment/index.js';
 
 import InputMask from 'react-input-mask';
@@ -47,11 +48,16 @@ export default function Payment() {
   const [tickets, setTickets] = useState([]);
   const { ticket, ticketLoading } = useTicket();
   const [ tela2, setTela2 ] = useState(false);
+  const [ tela, setTela ] = useState(true);
   let ticketTypeOnline = [];
   let ticketTypePresential = [];
   const token = useToken();
   useEffect(async() => {
     async function confirmPayment() {
+      const Enrollments= await paymentApi.getEnrollments(token);
+      if(Enrollments) {
+        setTela(false);
+      }
       const res= await paymentApi.getTicket(token);
       setRemote(res.TicketType.isRemote);
       setIncludeHotel(res.TicketType.includesHotel);
@@ -161,7 +167,7 @@ export default function Payment() {
     }
   }; 
 
-  return (
+  return (tela ? <NoHotelMsg>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</NoHotelMsg>: 
     <>
       <Tela2 display={tela2 ? 'none' : 'block'}>
         <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
