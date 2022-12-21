@@ -4,13 +4,44 @@ import useTicket from '../../../hooks/api/useTicket';
 import useHotel from '../../../hooks/api/useHotel';
 import { getStatusPayment } from '../../../services/hotelApi';
 import { useState, useEffect } from 'react';
+import useBooking from '../../../hooks/api/useBooking';
+import useHotelRooms from '../../../hooks/api/useRooms';
+
+function HotelOptions({ id, hotel, selected, setSelected }) {
+  const { rooms } = useHotelRooms(hotel.id);
+  console.log(selected);
+  return (
+    <HotelCard selected={selected.id === id ? selected.id : false} onClick={() => setSelected(rooms)}>
+      <HotelImg image={hotel.image} />
+      <HotelName>{hotel.name}</HotelName>
+      <Accomodations>
+        Tipos de acomodação:
+        {hotel.Rooms.find((room) => room.capacity > 2) ? (
+          <>
+            <Info>Single, Double e Triple</Info>
+            Vagas disponíveis:
+            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room._count.Booking, 0)}</Info>
+          </>
+        ) : (
+          <>
+            <Info>Single e Double</Info>
+            Vagas disponíveis:
+            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room._count.Booking, 0)}</Info>
+          </>
+        )}
+      </Accomodations>
+    </HotelCard>
+  );
+}
 
 export default function Hotel() {
   const { ticket, ticketLoading } = useTicket();
   const { hotel, hotelLoading } = useHotel();
+  const { booking } = useBooking();
   const [ticketType, setTicketType] = useState({});
   const [hotels, setHotels] = useState([]);
-  const [ StatusPay, setStatusPay] = useState(false);
+  const [StatusPay, setStatusPay] = useState(false);
+  const [selected, setSelected] = useState({});
 
   useEffect(() => {
     if (ticket) {
@@ -23,17 +54,27 @@ export default function Hotel() {
       setHotels(hotel);
     }
   }, [hotelLoading]);
-  
+
   useEffect(async() => {
     try {
       await getStatusPayment();
       setStatusPay(true);
-    }catch(error) {
+    } catch (error) {
       console.log(error);
-    };
+    }
+  }, [StatusPay]);
+
+  useEffect(async() => {
+    try {
+      await getStatusPayment();
+      setStatusPay(true);
+    } catch (error) {
+      console.log(error);
+    }
   }, [StatusPay]);
 
   console.log(hotels);
+  console.log(booking);
 
   return (
     <>
@@ -43,28 +84,20 @@ export default function Hotel() {
           <Title>Primeiro, escolha seu hotel</Title>
           <Container>
             {hotels.map((hotel) => (
-              <HotelCard>
-                <HotelImg image={hotel.image} />
-                <HotelName>{hotel.name}</HotelName>
-                <Accomodations>
-                  Tipos de acomodação:
-                  {hotel.Rooms.find((room) => room.capacity > 2) ? (
-                    <Info>Single, Double e Triple</Info>
-                  ) : (
-                    <Info>Single e Double</Info>
-                  )}
-                </Accomodations>
-              </HotelCard>
+              <HotelOptions id={hotel.id} hotel={hotel} selected={selected} setSelected={setSelected} />
             ))}
           </Container>
         </>
       ) : (
         <>
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-          {StatusPay ? ( 
+          {StatusPay ? (
             <NoHotelMsg>
               Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades
-            </NoHotelMsg>) : (<NoHotelMsg>Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem</NoHotelMsg>)}
+            </NoHotelMsg>
+          ) : (
+            <NoHotelMsg>Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem</NoHotelMsg>
+          )}
         </>
       )}
     </>
@@ -111,7 +144,7 @@ const HotelCard = styled.div`
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  background-color: #ebebeb;
+  background-color: ${(props) => (props.selected ? '#FFEED2' : '#EBEBEB')};
   color: #343434;
   width: 15vw;
   height: 35vh;
@@ -142,7 +175,7 @@ const Accomodations = styled.div`
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
-  line-height: 15px;
+  line-height: 20px;
   color: #3c3c3c;
 `;
 
