@@ -2,9 +2,10 @@ import useTicket from '../../../hooks/api/useGetTicketTypes';
 import useReservation from '../../../hooks/api/useReservation';
 import { useEffect, useState }  from 'react';
 import { toast } from 'react-toastify';
-import { TicketPrice, TicketType, Card, TicketTypeBox, SubTitle, StyledTypography, Button } from '../../../components/Payment';
+import { TicketPrice, TicketType, Card, TicketTypeBox, SubTitle, StyledTypography, Button, NoEnrollMsg  } from '../../../components/Payment';
 import * as ticketApi from '../../../services/ticketApi';
 import useToken from '../../../hooks/useToken';
+import { getPersonalInformations } from '../../../services/enrollmentApi';
 
 export default function Payment() {
   const [presential, setPresential] = useState(false);
@@ -16,9 +17,16 @@ export default function Payment() {
   const [tickets, setTickets] = useState([]);
   const { ticket, ticketLoading } = useTicket();
   const token = useToken();
+  const [ StatusEnroll, setStatusEnroll] = useState(false);
   let ticketTypeOnline = [];
   let ticketTypePresential = [];
+
+  useEffect( async() => {
+    await getPersonalInformations(token);
+    setStatusEnroll(true);
+  }, [setStatusEnroll]);
   
+  console.log(ticket);
   useEffect(() => {
     if(ticket) {
       setTickets(ticket);
@@ -65,8 +73,8 @@ export default function Payment() {
     }
   }
  
-  console.log(tickets);
-
+  console.log(tickets + ' ticket');
+  console.log(Ticket + ' Ticket');
   async function sendInfoTicket( online ) {
     if(online) {
       const body =  {
@@ -79,45 +87,49 @@ export default function Payment() {
   return (
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-      <SubTitle variant='h6'>Primeiro, escolha sua modalidade de ingresso</SubTitle>
-      <TicketTypeBox>
-        <Card onClick={() => {selectTicket('presencial'); setPresential(true); setOnline(false);}} primary={presential} >
-          <TicketType >{ticket === null ? <> </> : ticketTypePresential.name}</TicketType >
-          <TicketPrice>R${ticket === null ? <> </> : ticketTypePresential.price }</TicketPrice>
-        </Card>
-        <Card onClick={() => {setOnline(true); setPresential(false);}} primary={online} >
-          <TicketType >{ticket === null? (<> </>) : (ticketTypeOnline.name) }</TicketType >
-          <TicketPrice>R${ticket === null ? (<> </>) : (ticketTypeOnline.price)}</TicketPrice>
-        </Card>
-      </TicketTypeBox> 
-      {presential === true && online === false  ? (
-        <>  
-          <SubTitle variant='h6'>Ótimo! Agora escolha sua modalidade de hospedagem</SubTitle>
+      
+      {StatusEnroll ? 
+        ( <>
+          <SubTitle variant='h6'>Primeiro, escolha sua modalidade de ingresso</SubTitle>
           <TicketTypeBox>
-            <Card  onClick={() => selectTicket('no hotel')} primary={presentialWithoutHotel} >
-              <TicketType >Sem Hotel</TicketType >
-              <TicketPrice>+ R$ 0</TicketPrice>
+            <Card onClick={() => {selectTicket('presencial'); setPresential(true); setOnline(false);}} primary={presential} >
+              <TicketType >{ticket === null ? <> </> : ticketTypePresential.name}</TicketType >
+              <TicketPrice>R${ticket === null ? <> </> : ticketTypePresential.price }</TicketPrice>
             </Card>
-            <Card  onClick={() => selectTicket()} primary={presentialWithHotel}>
-              <TicketType>Com Hotel</TicketType >
-              <TicketPrice>+ R$ 350</TicketPrice>
+            <Card onClick={() => {setOnline(true); setPresential(false);}} primary={online} >
+              <TicketType >{ticket === null? (<> </>) : (ticketTypeOnline.name) }</TicketType >
+              <TicketPrice>R${ticket === null ? (<> </>) : (ticketTypeOnline.price)}</TicketPrice>
             </Card>
-          </TicketTypeBox>
-          {presentialWithHotel || presentialWithoutHotel ? (
-            <>
-              <SubTitle variant='h6'>Fechado! O total ficou em <strong> R$ {Ticket[0].price}.</strong> agora é so confirmar</SubTitle>
-              <Button onClick={submit}>RESERVAR INGRESSO</Button>
+          </TicketTypeBox> 
+          {presential === true && online === false  ? (
+            <>  
+              <SubTitle variant='h6'>Ótimo! Agora escolha sua modalidade de hospedagem</SubTitle>
+              <TicketTypeBox>
+                <Card  onClick={() => selectTicket('no hotel')} primary={presentialWithoutHotel} >
+                  <TicketType >Sem Hotel</TicketType >
+                  <TicketPrice>+ R$ 0</TicketPrice>
+                </Card>
+                <Card  onClick={() => selectTicket()} primary={presentialWithHotel}>
+                  <TicketType>Com Hotel</TicketType >
+                  <TicketPrice>+ R$ 350</TicketPrice>
+                </Card>
+              </TicketTypeBox>
+              {presentialWithHotel || presentialWithoutHotel ? (
+                <>
+                  <SubTitle variant='h6'>Fechado! O total ficou em <strong> R$ {Ticket[0].price}.</strong> agora é so confirmar</SubTitle>
+                  <Button onClick={submit}>RESERVAR INGRESSO</Button>
+                </>
+              ):(
+                <>
+                </>
+              )}   
             </>
-          ):(
+
+          ): (
             <>
             </>
-          )}
-          
-        </>
-      ): (
-        <>
-        </>
-      ) }
+          ) }
+        </>) : (<NoEnrollMsg>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso </NoEnrollMsg>) }
 
       {online === true && presential === false ? (
         <>  
