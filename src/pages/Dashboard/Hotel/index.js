@@ -55,7 +55,7 @@ export default function Hotel() {
     }
   }, [hotelLoading]);
 
-  /*  useEffect(async () => {
+  useEffect(async() => {
     try {
       await getStatusPayment();
       setStatusPay(true);
@@ -64,14 +64,14 @@ export default function Hotel() {
     }
   }, [StatusPay]);
 
-  useEffect(async () => {
+  useEffect(async() => {
     try {
       await getStatusPayment();
       setStatusPay(true);
     } catch (error) {
       console.log(error);
     }
-  }, [StatusPay]); */
+  }, [StatusPay]);
 
   console.log(hotels);
   console.log(booking);
