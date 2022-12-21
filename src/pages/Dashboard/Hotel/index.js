@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useTicket from '../../../hooks/api/useTicket';
 import useHotel from '../../../hooks/api/useHotel';
+import { getStatusPayment } from '../../../services/hotelApi';
 import { useState, useEffect } from 'react';
 
 export default function Hotel() {
@@ -9,6 +10,7 @@ export default function Hotel() {
   const { hotel, hotelLoading } = useHotel();
   const [ticketType, setTicketType] = useState({});
   const [hotels, setHotels] = useState([]);
+  const [ StatusPay, setStatusPay] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -21,6 +23,17 @@ export default function Hotel() {
       setHotels(hotel);
     }
   }, [hotelLoading]);
+  
+  useEffect(async() => {
+    try {
+      await getStatusPayment();
+      setStatusPay(true);
+    }catch(error) {
+      console.log(error);
+    };
+  }, [StatusPay]);
+
+  console.log(hotels);
 
   return (
     <>
@@ -33,6 +46,14 @@ export default function Hotel() {
               <HotelCard>
                 <HotelImg image={hotel.image} />
                 <HotelName>{hotel.name}</HotelName>
+                <Accomodations>
+                  Tipos de acomodação:
+                  {hotel.Rooms.find((room) => room.capacity > 2) ? (
+                    <Info>Single, Double e Triple</Info>
+                  ) : (
+                    <Info>Single e Double</Info>
+                  )}
+                </Accomodations>
               </HotelCard>
             ))}
           </Container>
@@ -40,9 +61,10 @@ export default function Hotel() {
       ) : (
         <>
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-          <NoHotelMsg>
-            Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades
-          </NoHotelMsg>
+          {StatusPay ? ( 
+            <NoHotelMsg>
+              Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades
+            </NoHotelMsg>) : (<NoHotelMsg>Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem</NoHotelMsg>)}
         </>
       )}
     </>
@@ -58,6 +80,13 @@ const Title = styled.span`
   font-weight: 400;
   font-size: 20px;
   color: #8e8e8e;
+`;
+
+const Info = styled.span`
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: #3c3c3c;
 `;
 
 const NoHotelMsg = styled.div`
@@ -99,9 +128,22 @@ const HotelImg = styled.div`
 `;
 
 const HotelName = styled.div`
-  width: 12.3vw;
-  height: 15vh;
+  width: 12vw;
+  height: 5vh;
   margin-top: 10px;
+`;
+
+const Accomodations = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 12vw;
+  height: 15vh;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  color: #3c3c3c;
 `;
 
 const Container = styled.div`

@@ -143,8 +143,8 @@ export default function Payment() {
     }
   }
  
-  console.log(tickets);
-
+  console.log(tickets + ' ticket');
+  console.log(Ticket + ' Ticket');
   async function sendInfoTicket( online ) {
     try {
       if(online) {
