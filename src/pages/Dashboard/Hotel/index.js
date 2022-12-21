@@ -9,6 +9,7 @@ export default function Hotel() {
   const { hotel, hotelLoading } = useHotel();
   const [ticketType, setTicketType] = useState({});
   const [hotels, setHotels] = useState([]);
+  const [capacity, setCapacity] = useState(0);
 
   useEffect(() => {
     if (ticket) {
@@ -38,9 +39,17 @@ export default function Hotel() {
                 <Accomodations>
                   Tipos de acomodação:
                   {hotel.Rooms.find((room) => room.capacity > 2) ? (
-                    <Info>Single, Double e Triple</Info>
+                    <>
+                      <Info>Single, Double e Triple</Info>
+                      Vagas disponíveis:
+                      <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity, 0)}</Info>
+                    </>
                   ) : (
-                    <Info>Single e Double</Info>
+                    <>
+                      <Info>Single e Double</Info>
+                      Vagas disponíveis:
+                      <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity, 0)}</Info>
+                    </>
                   )}
                 </Accomodations>
               </HotelCard>
@@ -130,7 +139,7 @@ const Accomodations = styled.div`
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
-  line-height: 15px;
+  line-height: 20px;
   color: #3c3c3c;
 `;
 
