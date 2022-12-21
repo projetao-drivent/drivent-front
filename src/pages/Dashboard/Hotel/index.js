@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import useTicket from '../../../hooks/api/useTicket';
 import useHotel from '../../../hooks/api/useHotel';
+import { getStatusPayment } from '../../../services/hotelApi';
 import { useState, useEffect } from 'react';
 
 export default function Hotel() {
@@ -9,7 +10,7 @@ export default function Hotel() {
   const { hotel, hotelLoading } = useHotel();
   const [ticketType, setTicketType] = useState({});
   const [hotels, setHotels] = useState([]);
-  const [capacity, setCapacity] = useState(0);
+  const [StatusPay, setStatusPay] = useState(false);
 
   useEffect(() => {
     if (ticket) {
@@ -22,6 +23,24 @@ export default function Hotel() {
       setHotels(hotel);
     }
   }, [hotelLoading]);
+
+  useEffect(async() => {
+    try {
+      await getStatusPayment();
+      setStatusPay(true);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [StatusPay]);
+
+  useEffect(async() => {
+    try {
+      await getStatusPayment();
+      setStatusPay(true);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [StatusPay]);
 
   console.log(hotels);
 
@@ -59,9 +78,13 @@ export default function Hotel() {
       ) : (
         <>
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-          <NoHotelMsg>
-            Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades
-          </NoHotelMsg>
+          {StatusPay ? (
+            <NoHotelMsg>
+              Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades
+            </NoHotelMsg>
+          ) : (
+            <NoHotelMsg>Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem</NoHotelMsg>
+          )}
         </>
       )}
     </>
