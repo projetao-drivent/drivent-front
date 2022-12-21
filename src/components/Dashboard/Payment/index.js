@@ -109,3 +109,7 @@ export const PaymentConfirmation = styled.div`
     font-weight: bold;
   }
 `;
+
+export const Tela2 =styled.div`
+  display: ${(props) => props.display};
+`;
