@@ -6,6 +6,9 @@ import { getStatusPayment } from '../../../services/hotelApi';
 import { useState, useEffect } from 'react';
 import useBooking from '../../../hooks/api/useBooking';
 import useHotelRooms from '../../../hooks/api/useRooms';
+import Rooms from './Rooms';
+import useSaveBooking from '../../../hooks/api/useSaveBooking';
+import { toast } from 'react-toastify';
 
 function HotelOptions({ id, hotel, selected, setSelected }) {
   const { rooms } = useHotelRooms(hotel.id);
@@ -20,13 +23,13 @@ function HotelOptions({ id, hotel, selected, setSelected }) {
           <>
             <Info>Single, Double e Triple</Info>
             Vagas disponíveis:
-            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room._count.Booking, 0)}</Info>
+            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room.Booking.length, 0)}</Info>
           </>
         ) : (
           <>
             <Info>Single e Double</Info>
             Vagas disponíveis:
-            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room._count.Booking, 0)}</Info>
+            <Info>{hotel.Rooms.reduce((sum, room) => sum + room.capacity - room.Booking.length, 0)}</Info>
           </>
         )}
       </Accomodations>
@@ -42,6 +45,8 @@ export default function Hotel() {
   const [hotels, setHotels] = useState([]);
   const [StatusPay, setStatusPay] = useState(false);
   const [selected, setSelected] = useState({});
+  const [selectedRoom, setSelectedRoom] = useState({});
+  const { roomBookingLoading, postRoomBooking } = useSaveBooking();
 
   useEffect(() => {
     if (ticket) {
@@ -76,6 +81,16 @@ export default function Hotel() {
   console.log(hotels);
   console.log(booking);
 
+  async function bookRoom() {
+    const data = { roomId: selectedRoom.id };
+    try {
+      await postRoomBooking(data);
+      toast('Quarto reservado com sucesso!');
+    } catch (err) {
+      toast('Não foi possível reservar o quarto!');
+    }
+  }
+
   return (
     <>
       {ticketType.includesHotel ? (
@@ -83,9 +98,24 @@ export default function Hotel() {
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
           <Title>Primeiro, escolha seu hotel</Title>
           <Container>
-            {hotels.map((hotel) => (
-              <HotelOptions id={hotel.id} hotel={hotel} selected={selected} setSelected={setSelected} />
-            ))}
+            <HotelContainer>
+              {hotels.map((hotel) => (
+                <HotelOptions id={hotel.id} hotel={hotel} selected={selected} setSelected={setSelected} />
+              ))}
+            </HotelContainer>
+            {selected.id ? (
+              <HotelContainer>
+                <Title>Ótima pedida! Agora escolha seu quarto:</Title>
+                <RoomContainer>
+                  {selected.Rooms.map((room) => (
+                    <Rooms room={room} selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom} />
+                  ))}
+                </RoomContainer>
+              </HotelContainer>
+            ) : (
+              <></>
+            )}
+            {selectedRoom.id ? <BookButton onClick={() => bookRoom()}>RESERVAR QUARTO</BookButton> : <></>}
           </Container>
         </>
       ) : (
@@ -113,6 +143,8 @@ const Title = styled.span`
   font-weight: 400;
   font-size: 20px;
   color: #8e8e8e;
+  width: 100vw;
+  margin-top: 25px;
 `;
 
 const Info = styled.span`
@@ -188,6 +220,7 @@ const Container = styled.div`
 
   margin-top: 20px;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
 
   @media (max-width: 600px) {
@@ -198,4 +231,30 @@ const Container = styled.div`
     min-width: 100%;
     max-width: initial;
   }
+`;
+
+const HotelContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const RoomContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 30px;
+`;
+
+const BookButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  width: 180px;
+  height: 40px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin-top: 20px;
 `;
