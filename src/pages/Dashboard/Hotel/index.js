@@ -78,8 +78,8 @@ export default function Hotel() {
     }
   }, [StatusPay]);
 
-  console.log(hotels);
-  console.log(booking);
+  console.log(ticket);
+  console.log(ticketType);
 
   async function bookRoom() {
     const data = { roomId: selectedRoom.id };
@@ -93,7 +93,7 @@ export default function Hotel() {
 
   return (
     <>
-      {ticketType.includesHotel ? (
+      {ticketType.includesHotel && ticket.status === 'PAID' ? (
         <>
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
           <Title>Primeiro, escolha seu hotel</Title>
